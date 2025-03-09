@@ -3,12 +3,12 @@ import { createCard, deleteCard, likeCard } from "./components/card.js";
 import {
   closeModal,
   openModal,
-  addCloseModalListener
+  addCloseModalListener,
 } from "./components/modal.js";
 import {
   formValidationConfig,
   enableValidation,
-  clearValidation
+  clearValidation,
 } from "./components/validation.js";
 import {
   addNewCard,
@@ -36,15 +36,13 @@ const profileDescription = document.querySelector(".profile__description");
 const profileImage = document.querySelector(".profile__image");
 const placesList = document.querySelector(".places__list");
 let userId;
+const popupImage = imagePopup.querySelector(".popup__image");
+const popupCaption = imagePopup.querySelector(".popup__caption");
 
 function openImagePopup(imageSrc, imageAlt) {
-  const popupImage = imagePopup.querySelector(".popup__image");
-  const popupCaption = imagePopup.querySelector(".popup__caption");
-
   popupImage.src = imageSrc;
   popupImage.alt = imageAlt;
   popupCaption.textContent = imageAlt;
-
   openModal(imagePopup);
 }
 
@@ -61,7 +59,10 @@ buttonAddCard.addEventListener("click", () => {
   clearValidation(formNewPlace, formValidationConfig);
 });
 
-profileImage.addEventListener("click", () => openModal(editAvatarPopup));
+profileImage.addEventListener("click", () => {
+  openModal(editAvatarPopup);
+  clearValidation(formEditAvatar, formValidationConfig);
+});
 
 addCloseModalListener(newCardPopup);
 addCloseModalListener(editPopup);
@@ -70,14 +71,11 @@ addCloseModalListener(editAvatarPopup);
 
 function handleProfileFormSubmit(e) {
   e.preventDefault();
-  const submitButton = formEditProfile.querySelector(".popup__button");
-  const originalButtonText = submitButton.textContent; // Сохраняем исходный текст кнопки
-
-  submitButton.textContent = "Сохранение..."; // Меняем текст кнопки
-
+  const submitButton = e.submitter;
+  const originalButtonText = submitButton.textContent;
+  submitButton.textContent = "Сохранение...";
   const newName = nameInput.value;
   const newAbout = jobInput.value;
-
   updateUserInfo(newName, newAbout)
     .then((userData) => {
       profileTitle.textContent = userData.name;
@@ -88,7 +86,7 @@ function handleProfileFormSubmit(e) {
       console.log(err);
     })
     .finally(() => {
-      submitButton.textContent = originalButtonText; // Возвращаем исходный текст кнопки
+      submitButton.textContent = originalButtonText;
     });
 }
 
@@ -96,14 +94,11 @@ formEditProfile.addEventListener("submit", handleProfileFormSubmit);
 
 function addNewFormSubmit(e) {
   e.preventDefault();
-  const submitButton = formNewPlace.querySelector(".popup__button");
-  const originalButtonText = submitButton.textContent; // Сохраняем исходный текст кнопки
-
-  submitButton.textContent = "Сохранение..."; // Меняем текст кнопки
-
+  const submitButton = e.submitter;
+  const originalButtonText = submitButton.textContent;
+  submitButton.textContent = "Сохранение...";
   const placeValue = placeInput.value;
   const linkValue = linkInput.value;
-
   addNewCard(placeValue, linkValue)
     .then((cardData) => {
       console.log(userId);
@@ -122,7 +117,7 @@ function addNewFormSubmit(e) {
       console.log(err);
     })
     .finally(() => {
-      submitButton.textContent = originalButtonText; // Возвращаем исходный текст кнопки
+      submitButton.textContent = originalButtonText;
     });
 }
 
@@ -136,13 +131,10 @@ formNewPlace.addEventListener("submit", addNewFormSubmit);
 
 function handleEditAvatarFormSubmit(e) {
   e.preventDefault();
-  const submitButton = formEditAvatar.querySelector(".popup__button");
-  const originalButtonText = submitButton.textContent; // Сохраняем исходный текст кнопки
-
-  submitButton.textContent = "Сохранение..."; // Меняем текст кнопки
-
+  const submitButton = e.submitter;
+  const originalButtonText = submitButton.textContent;
+  submitButton.textContent = "Сохранение...";
   const newAvatarUrl = avatarInput.value;
-
   updateAvatar(newAvatarUrl)
     .then((userData) => {
       profileImage.style.backgroundImage = `url(${userData.avatar})`;
@@ -153,7 +145,7 @@ function handleEditAvatarFormSubmit(e) {
       console.log(err);
     })
     .finally(() => {
-      submitButton.textContent = originalButtonText; // Возвращаем исходный текст кнопки
+      submitButton.textContent = originalButtonText;
     });
 }
 

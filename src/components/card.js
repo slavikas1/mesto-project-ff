@@ -1,4 +1,4 @@
-import { config, deleteCardFromServer } from "./api.js";
+import { request, deleteCardFromServer } from "./api.js";
 export function createCard(cardValue, deleteCard, likeCard, openImagePopup, userId) {
   const cardTemplate = document.querySelector("#card-template").content;
   const cardElement = cardTemplate.querySelector(".card").cloneNode(true);
@@ -45,16 +45,9 @@ export function likeCard(cardId, likeButton, likeCountElement) {
   const isLiked = likeButton.classList.contains("card__like-button_is-active");
   const method = isLiked ? 'DELETE' : 'PUT';
 
-  fetch(`${config.baseUrl}/cards/likes/${cardId}`, {
+  request(`/cards/likes/${cardId}`, {
     method: method,
-    headers: config.headers,
   })
-    .then(res => {
-      if (res.ok) {
-        return res.json();
-      }
-      return Promise.reject(`Ошибка: ${res.status}`);
-    })
     .then((updatedCard) => {
       likeCountElement.textContent = updatedCard.likes.length;
       likeButton.classList.toggle("card__like-button_is-active");
@@ -63,4 +56,3 @@ export function likeCard(cardId, likeButton, likeCountElement) {
       console.log(err);
     });
 };
-
